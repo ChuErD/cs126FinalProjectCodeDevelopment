@@ -1,0 +1,13 @@
+﻿  ofApp.cpp
+c:\users\sunch\openframeworks\of_v0.10.1_vs2017_release\addons\ofxaudiofile\example\src\ofapp.cpp(75): warning C4018: '<': signed/unsigned mismatch
+c:\users\sunch\openframeworks\of_v0.10.1_vs2017_release\addons\ofxaudiofile\example\src\ofapp.cpp(108): warning C4018: '<': signed/unsigned mismatch
+c:\users\sunch\openframeworks\of_v0.10.1_vs2017_release\addons\ofxaudiofile\example\src\ofapp.cpp(196): warning C4018: '<': signed/unsigned mismatch
+c:\users\sunch\openframeworks\of_v0.10.1_vs2017_release\addons\ofxaudiofile\example\src\ofapp.cpp(206): warning C4018: '<': signed/unsigned mismatch
+  example.vcxproj -> C:\Users\sunch\OpenFrameworks\of_v0.10.1_vs2017_release\addons\ofxAudioFile\example\bin\example_debug.exe
+  
+  	                   2	C:\Users\sunch\OpenFrameworks\of_v0.10.1_vs2017_release\libs\fmodex\lib\vs\Win32\
+  	  *EXTRA File 		 6018560	C:\Users\sunch\OpenFrameworks\of_v0.10.1_vs2017_release\addons\ofxAudioFile\example\bin\FreeImage.dll
+  
+  	                   1	C:\Users\sunch\OpenFrameworks\of_v0.10.1_vs2017_release\libs\FreeImage\lib\vs\Win32\
+  	  *EXTRA File 		 1266176	C:\Users\sunch\OpenFrameworks\of_v0.10.1_vs2017_release\addons\ofxAudioFile\example\bin\fmodex.dll
+  	  *EXTRA File 		 1312768	C:\Users\sunch\OpenFrameworks\of_v0.10.1_vs2017_release\addons\ofxAudioFile\example\bin\fmodexL.dll
