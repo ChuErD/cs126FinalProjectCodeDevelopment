@@ -1,6 +1,7 @@
 #include "ofApp.h"
 #include <vector>
 #include <math.h>
+#include <string>
 
 
 //--------------------------------------------------------------
@@ -14,7 +15,7 @@ void ofApp::setup(){
     //std::string filepath = ofToDataPath("tubophone.ogg"); // ogg/vorbis
     //std::string filepath = ofToDataPath("tubophone.flac"); // FLAC
 
-    audiofile.setVerbose(true); 
+    audiofile.setVerbose(true);
     ofSetLogLevel(OF_LOG_VERBOSE);
     
     if( ofFile::doesFileExist( filepath ) ){
@@ -54,7 +55,7 @@ void ofApp::setup(){
 	test_settings.numOutputChannels = 2;
 	test_settings.numInputChannels = 0;
 	test_settings.bufferSize = 512;
-	ofSoundStreamSetup(settings);
+	ofSoundStreamSetup(test_settings);
 
 	// audiofile setup
     playhead = std::numeric_limits<int>::max(); // because it is converted to int for check
@@ -70,8 +71,45 @@ void ofApp::setup(){
 
 	// --------------------------------------------------------------------------------------------------------------------------
 	// --------------------------------------------------------------------------------------------------------------------------
-	// code block to calculate test_audiofile means
+	// code block to calculate audiofile means
 	std::vector<std::vector<float>> total_y;
+	for (int c = 0; c < audiofile.channels(); ++c) {
+
+		std::vector<float> current_channel_total_y;
+
+		float max = ofGetWidth();
+		for (int x = 0; x < max; ++x) {
+			int n = ofMap(x, 0, max, 0, audiofile.length(), true);
+			float val = audiofile.sample(n, c);
+			// float y = ofMap(val, -1.0f, 1.0f, ofGetHeight()*0.5, 0.0f); // used to be 0.5 instead of 0.25, 1.0 instead of 2.0
+			current_channel_total_y.push_back(val);
+		}
+
+		total_y.push_back(current_channel_total_y);
+	}
+
+	audiofile_channel_0_mean = getMean(total_y[0]);
+
+	audiofile_channel_1_mean = getMean(total_y[1]);
+
+	audiofile_channel_0_std = getStd(total_y[0], audiofile_channel_0_mean);
+
+	audiofile_channel_1_std = getStd(total_y[1], audiofile_channel_1_mean);
+
+	base_song_data = total_y;
+
+	for (int i = 0; i < base_song_data[0].size(); i++) {
+		base_song_data[0][i] = (base_song_data[0][i] - audiofile_channel_0_mean) / (audiofile_channel_0_std);
+	}
+
+	for (int i = 0; i < base_song_data[1].size(); i++) {
+		base_song_data[1][i] = (base_song_data[1][i] - audiofile_channel_1_mean) / (audiofile_channel_1_std);
+	}
+
+	// --------------------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------------------------------
+	// code block to calculate test_audiofile means
+	std::vector<std::vector<float>> test_total_y;
 	for (int c = 0; c < test_audiofile.channels(); ++c) {
 
 		std::vector<float> current_channel_total_y;
@@ -84,12 +122,26 @@ void ofApp::setup(){
 			current_channel_total_y.push_back(val);
 		}
 
-		total_y.push_back(current_channel_total_y);
+		test_total_y.push_back(current_channel_total_y);
 	}
 
-	test_audiofile_channel_0_mean = getMean(total_y[0]);
+	test_audiofile_channel_0_mean = getMean(test_total_y[0]);
 
-	test_audiofile_channel_1_mean = getMean(total_y[1]);
+	test_audiofile_channel_1_mean = getMean(test_total_y[1]);
+
+	test_audiofile_channel_0_std = getStd(test_total_y[0], test_audiofile_channel_0_mean);
+
+	test_audiofile_channel_1_std = getStd(test_total_y[1], test_audiofile_channel_1_mean);
+
+	test_song_data = test_total_y;
+
+	for (int i = 0; i < test_song_data[0].size(); i++) {
+		test_song_data[0][i] = (test_song_data[0][i] - test_audiofile_channel_0_mean) / (test_audiofile_channel_0_std);
+	}
+
+	for (int i = 0; i < test_song_data[1].size(); i++) {
+		test_song_data[1][i] = (test_song_data[1][i] - test_audiofile_channel_1_mean) / (test_audiofile_channel_1_std);
+	}
 }
 
 //--------------------------------------------------------------
@@ -99,55 +151,70 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
-	std::vector<std::vector<float>> total_y;
     
     ofNoFill();
     
     ofPushMatrix();
-    for( int c=0; c<audiofile.channels(); ++c ){
+    for( int c=0; c<4; ++c ){
 
-		std::vector<float> current_channel_total_y;
-        
-        float max = ofGetWidth();
-        ofBeginShape();
-        for( int x=0; x<max; ++x){
-            int n = ofMap( x, 0, max, 0, audiofile.length(), true );
-            float val = audiofile.sample( n, c );
-            float y = ofMap( val, -1.0f, 1.0f, ofGetHeight()*0.5, 0.0f ); // used to be 0.5 instead of 0.25, 1.0 instead of 2.0
-			current_channel_total_y.push_back(val);
-            ofVertex( x, y );
-        }
-        ofEndShape();        
-  
-        float phx = ofMap( playhead, 0, audiofile.length(), 0, max );
-        ofDrawLine( phx, 0, phx, ofGetHeight()*0.5f); // used to be 0.5
-        
-        ofTranslate( 0.0, ofGetHeight()*0.5 ); // used to be 0.5
+		if (c <= 1) {
 
-		total_y.push_back(current_channel_total_y);
+			float max = ofGetWidth();
+			ofBeginShape();
+			for (int x = 0; x < max; ++x) {
+				int n = ofMap(x, 0, max, 0, audiofile.length(), true);
+				float val = audiofile.sample(n, c);
+				float y = ofMap(val, -1.0f, 1.0f, ofGetHeight()*0.25, 0.0f); // used to be 0.5 instead of 0.25, 1.0 instead of 2.0
+				ofVertex(x, y);
+			}
+			ofEndShape();
+
+			float phx = ofMap(playhead, 0, audiofile.length(), 0, max);
+			ofDrawLine(phx, 0, phx, ofGetHeight()*0.25f); // used to be 0.5
+
+			ofTranslate(0.0, ofGetHeight()*0.25); // used to be 0.5
+		}
+		else {
+			float max = ofGetWidth();
+			ofBeginShape();
+			for (int x = 0; x < max; ++x) {
+				int n = ofMap(x, 0, max, 0, test_audiofile.length(), true);
+				float val = test_audiofile.sample(n, (c % 2));
+				float y = ofMap(val, -1.0f, 1.0f, ofGetHeight()*0.25, 0.0f); // used to be 0.5 instead of 0.25, 1.0 instead of 2.0
+				ofVertex(x, y);
+			}
+			ofEndShape();
+
+			float phx = ofMap(test_playhead, 0, test_audiofile.length(), 0, max);
+			ofDrawLine(phx, 0, phx, ofGetHeight()*0.25f); // used to be 0.5
+
+			ofTranslate(0.0, ofGetHeight()*0.25); // used to be 0.5
+		}
     }
     ofPopMatrix();
 
-	float channel_0_mean = getMean(total_y[0]);
+	std::string basesong_filepath = "Base song: " + audiofile.path().substr(5);
 
-	float channel_1_mean = getMean(total_y[1]);
-
-	float channel_0_std = getStd(total_y[0], channel_0_mean);
-
-	float channel_1_std = getStd(total_y[1], channel_1_mean);
+	std::string testsong_filepath = "Test song: " + test_audiofile.path().substr(5);
     
-    ofDrawBitmapString( audiofile.path(), 10, 20 );
+    ofDrawBitmapString( basesong_filepath, 10, (ofGetHeight() / 2) - 265 );
 
-	float to_draw_distance_channel_0 = (test_audiofile_channel_0_mean - channel_0_mean) / (channel_0_std);
+	ofDrawBitmapString(testsong_filepath, 10, (ofGetHeight() / 2) + 275);
 
-	float to_draw_distance_channel_1 = (test_audiofile_channel_1_mean - channel_1_mean) / (channel_1_std);
+	float to_draw_distance_channel_0 = (test_audiofile_channel_0_mean - audiofile_channel_0_mean) / (audiofile_channel_0_std);
 
-	ofDrawBitmapString(to_draw_distance_channel_0, ofGetWidth() / 2, ofGetHeight() - 30);
+	float to_draw_distance_channel_1 = (test_audiofile_channel_1_mean - audiofile_channel_1_mean) / (audiofile_channel_1_std);
 
-	ofDrawBitmapString(to_draw_distance_channel_1, ofGetWidth() / 2, ofGetHeight() - 15);
+	//result = name + std::to_string(age);
+	std::string channel_0_output = "Channel 0 z-value: " + std::to_string(to_draw_distance_channel_0);
 
-	ofDrawBitmapString("hey oh, press SPACEBAR to play, press L to load a sample", ofGetWidth() / 2 - 225, ofGetHeight() - 50);
+	std::string channel_1_output = "Channel 1 z-value: " + std::to_string(to_draw_distance_channel_1);
+
+	ofDrawBitmapString(channel_0_output, ofGetWidth() / 2 - 35, ofGetHeight() - 30);
+
+	ofDrawBitmapString(channel_1_output, ofGetWidth() / 2 - 35, ofGetHeight() - 15);
+
+	ofDrawBitmapString("hey oh, press SPACEBAR to play base song, press S to stop playing, press L to load a new base sample, press K to load a new test sample.", ofGetWidth() / 2 - 400, ofGetHeight() - 50);
 
 }
 
@@ -155,39 +222,45 @@ void ofApp::draw(){
 void ofApp::audioOut(ofSoundBuffer & buffer){
     
     // really spartan and not efficient sample playing, just for testing
+
+	//base song audio out
     
     if( playheadControl >= 0.0 ){
         playhead = playheadControl;
         playheadControl = -1.0;
     }
-    
-    for (size_t i = 0; i < buffer.getNumFrames(); i++){
-        
-        int n = playhead;
-        
-        if( n < audiofile.length()-1 ){
-            
-            for( size_t k=0; k<buffer.getNumChannels(); ++k){
-                if( k < audiofile.channels() ){
-                    float fract = playhead - (double) n;
-                    float s0 = audiofile.sample( n, k );
-                    float s1 = audiofile.sample( n+1, k );
-                    float isample = s0*(1.0-fract) + s1*fract; // linear interpolation
-                    buffer[i*buffer.getNumChannels() + k] = isample;
-                }else{
-                    buffer[i*buffer.getNumChannels() + k] = 0.0f;
-                }
-            }
-            
-            playhead += step;
-        
-        }else{
-            buffer[i*buffer.getNumChannels()    ] = 0.0f;
-            buffer[i*buffer.getNumChannels() + 1] = 0.0f;
-            playhead = std::numeric_limits<int>::max();
-        }
 
-    }
+	for (size_t i = 0; i < buffer.getNumFrames(); i++) {
+
+		int n = playhead;
+
+		if (n < audiofile.length() - 1) {
+
+			for (size_t k = 0; k < buffer.getNumChannels(); ++k) {
+				if (k < audiofile.channels()) {
+					float fract = playhead - (double)n;
+					float s0 = audiofile.sample(n, k);
+					float s1 = audiofile.sample(n + 1, k);
+					float isample = s0 * (1.0 - fract) + s1 * fract; // linear interpolation
+					buffer[i*buffer.getNumChannels() + k] = isample;
+				}
+				else {
+					buffer[i*buffer.getNumChannels() + k] = 0.0f;
+				}
+			}
+
+			playhead += step;
+
+		}
+		else {
+			buffer[i*buffer.getNumChannels()] = 0.0f;
+			buffer[i*buffer.getNumChannels() + 1] = 0.0f;
+			playhead = std::numeric_limits<int>::max();
+		}
+
+	}
+
+	
 }
 
 float ofApp::getMean(std::vector<float>& vect)
@@ -224,7 +297,16 @@ void ofApp::exit(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    if( key == ' ') playheadControl = 0.0;
+	if (key == ' ') {
+		playheadControl = 0.0;
+	}
+
+	if ((key == 's' || key == 'S')) {
+		playheadControl = -1.0;
+		test_playheadControl = -1.0;
+		playhead = std::numeric_limits<int>::max();
+		test_playhead = std::numeric_limits<int>::max();
+	}
     
     if( key == 'l' || key=='L'){
        //Open the Open File Dialog

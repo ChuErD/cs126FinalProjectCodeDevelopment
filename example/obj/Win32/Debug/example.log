@@ -1,8 +1,12 @@
 ﻿  ofApp.cpp
-c:\users\sunch\openframeworks\of_v0.10.1_vs2017_release\addons\ofxaudiofile\example\src\ofapp.cpp(75): warning C4018: '<': signed/unsigned mismatch
-c:\users\sunch\openframeworks\of_v0.10.1_vs2017_release\addons\ofxaudiofile\example\src\ofapp.cpp(108): warning C4018: '<': signed/unsigned mismatch
-c:\users\sunch\openframeworks\of_v0.10.1_vs2017_release\addons\ofxaudiofile\example\src\ofapp.cpp(196): warning C4018: '<': signed/unsigned mismatch
-c:\users\sunch\openframeworks\of_v0.10.1_vs2017_release\addons\ofxaudiofile\example\src\ofapp.cpp(206): warning C4018: '<': signed/unsigned mismatch
+c:\users\sunch\openframeworks\of_v0.10.1_vs2017_release\addons\ofxaudiofile\example\src\ofapp.cpp(76): warning C4018: '<': signed/unsigned mismatch
+c:\users\sunch\openframeworks\of_v0.10.1_vs2017_release\addons\ofxaudiofile\example\src\ofapp.cpp(101): warning C4018: '<': signed/unsigned mismatch
+c:\users\sunch\openframeworks\of_v0.10.1_vs2017_release\addons\ofxaudiofile\example\src\ofapp.cpp(105): warning C4018: '<': signed/unsigned mismatch
+c:\users\sunch\openframeworks\of_v0.10.1_vs2017_release\addons\ofxaudiofile\example\src\ofapp.cpp(113): warning C4018: '<': signed/unsigned mismatch
+c:\users\sunch\openframeworks\of_v0.10.1_vs2017_release\addons\ofxaudiofile\example\src\ofapp.cpp(138): warning C4018: '<': signed/unsigned mismatch
+c:\users\sunch\openframeworks\of_v0.10.1_vs2017_release\addons\ofxaudiofile\example\src\ofapp.cpp(142): warning C4018: '<': signed/unsigned mismatch
+c:\users\sunch\openframeworks\of_v0.10.1_vs2017_release\addons\ofxaudiofile\example\src\ofapp.cpp(269): warning C4018: '<': signed/unsigned mismatch
+c:\users\sunch\openframeworks\of_v0.10.1_vs2017_release\addons\ofxaudiofile\example\src\ofapp.cpp(279): warning C4018: '<': signed/unsigned mismatch
   example.vcxproj -> C:\Users\sunch\OpenFrameworks\of_v0.10.1_vs2017_release\addons\ofxAudioFile\example\bin\example_debug.exe
   
   	                   2	C:\Users\sunch\OpenFrameworks\of_v0.10.1_vs2017_release\libs\fmodex\lib\vs\Win32\

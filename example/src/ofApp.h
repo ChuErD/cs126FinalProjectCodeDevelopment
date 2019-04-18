@@ -42,11 +42,23 @@ class ofApp: public ofBaseApp{
 		//test audiofile means
 		float test_audiofile_channel_0_mean;
 		float test_audiofile_channel_1_mean;
+		float test_audiofile_channel_0_std;
+		float test_audiofile_channel_1_std;
+
+		//base audiofile means
+		float audiofile_channel_0_mean;
+		float audiofile_channel_1_mean;
+		float audiofile_channel_0_std;
+		float audiofile_channel_1_std;
         
 		void audioOut(ofSoundBuffer & buffer);
 
 		float getMean(std::vector<float> &vect);
 
 		float getStd(std::vector<float> &vect, float mean);
+
+		std::vector<std::vector<float>> test_song_data;
+
+		std::vector<std::vector<float>> base_song_data;
         	
 };
